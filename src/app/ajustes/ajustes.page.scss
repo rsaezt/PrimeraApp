@@ -1,0 +1,14 @@
+ion-input {
+  max-width: 200px; /* ✅ Limita el ancho */
+  white-space: nowrap; /* ✅ Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* ✅ Oculta el exceso de texto */
+  text-overflow: ellipsis; /* ✅ Muestra "..." si el texto es muy largo */
+}
+
+.perfil-img {
+  width: 120px; /* ✅ Tamaño más pequeño */
+  height: 120px; /* ✅ Mantiene proporciones */
+  border-radius: 50%; /* ✅ Hace la imagen circular */
+  object-fit: cover; /* ✅ Ajusta la imagen sin deformarla */
+  border: 2px solid #fff; /* ✅ Agrega un borde para estilo */
+}

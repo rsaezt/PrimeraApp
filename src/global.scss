@@ -35,3 +35,19 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+[color-theme="dark"] {
+  --ion-background-color: #121212;
+  --ion-text-color: white;
+  --ion-toolbar-background: #1a1a1a;
+}
+
+[color-theme="light"] {
+  --ion-background-color: #ffffff;
+  --ion-text-color: black;
+}
+
+[color-theme="dark"],
+[color-theme="light"] {
+  transition: background-color 0.5s ease, color 0.5s ease; /* ✅ Suaviza el cambio */
+}

@@ -1,0 +1,54 @@
+<ion-content>
+  <ion-header>
+  <ion-toolbar>
+    <ion-title>Contacto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navegarA('home')">🏠 Home</ion-button>
+      <ion-button (click)="navegarA('ajustes')">⚙️ Ajustes</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+  <!-- 📌 Sección de foro de fútbol -->
+  <ion-card>
+  <ion-card-header>
+    <ion-card-title>⚽ Foro de Fútbol</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let mensaje of mensajes">
+        <ion-label>
+          <h2>{{ mensaje.usuario }}</h2>
+          <p>{{ mensaje.texto }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-item>
+      <ion-input [(ngModel)]="mensajeNuevo" placeholder="Escribe tu mensaje..."></ion-input>
+    </ion-item>
+    <ion-button expand="full" (click)="enviarMensaje()">📩 Enviar Mensaje al Foro</ion-button>
+  </ion-card-content>
+</ion-card>
+
+  <!-- 📌 Sección de contacto directo -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>📩 Contacto</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item class="campo">
+        <ion-label position="stacked">Correo </ion-label>
+        <ion-input [(ngModel)]="correoUsuario" type="email"></ion-input>
+      </ion-item>
+      <ion-item class="campo">
+        <ion-label position="stacked">Mensaje </ion-label>
+        <ion-textarea [(ngModel)]="mensajeUsuario"></ion-textarea>
+      </ion-item>
+      <ion-button expand="full" (click)="enviarCorreo()">📩 Enviar mensaje</ion-button>
+      <ion-button expand="full" href="https://wa.me/56912345678?text=Hola,%20quiero%20contactarme%20contigo" target="_blank">
+        📱 Contactar por WhatsApp
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

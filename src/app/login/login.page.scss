@@ -1,0 +1,18 @@
+@keyframes rodarBalon {
+  0% {
+    transform: translateX(-100vw) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) rotate(360deg);
+    opacity: 0; 
+  }
+}
+
+.ball-animation {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  animation: rodarBalon 2s ease-in-out;
+}

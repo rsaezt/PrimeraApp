@@ -1,0 +1,17 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.perfil-container {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.equipo-item {
+  animation: slideIn 0.8s ease-out;
+}

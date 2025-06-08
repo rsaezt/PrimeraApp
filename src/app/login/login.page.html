@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <ion-img src="assets/balon.jpg" class="ball-animation"></ion-img>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Bienvenido a FutbolApp</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <ion-item>
+            <ion-label position="floating">Usuario</ion-label>
+            <ion-input type="text" formControlName="usuario"></ion-input>
+          </ion-item>
+          <ion-text color="danger" *ngIf="loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched">
+            <p>El usuario debe tener entre 4 y 12 caracteres.</p>
+          </ion-text>
+
+          <ion-item>
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input [type]="mostrarPassword ? 'text' : 'password'" formControlName="password"></ion-input>
+            <ion-button fill="clear" (click)="togglePassword()">
+              {{ mostrarPassword ? 'Ocultar' : 'Mostrar' }}
+            </ion-button>
+          </ion-item>
+          <ion-text color="danger" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <p>La contraseña debe tener entre 4 y 12 caracteres.</p>
+          </ion-text>
+
+          <ion-button expand="full" type="submit" [disabled]="!loginForm.valid">
+            Ingresar
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content> 

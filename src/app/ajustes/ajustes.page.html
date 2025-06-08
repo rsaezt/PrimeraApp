@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajustes</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-item>
+  <ion-button expand="full" (click)="navegarA('home')">🏠 Home</ion-button>
+  <ion-button expand="full" (click)="navegarA('perfil')">👤 Perfil</ion-button>
+  <ion-button expand="full" (click)="navegarA('contacto')">📩 Contacto</ion-button>
+</ion-item>
+<ion-item>
+  <ion-label>Foto de perfil</ion-label>
+  <input type="file" (change)="cargarImagen($event)">
+</ion-item>
+
+<ion-item>
+  <img [src]="imagenPerfil || 'assets/default-avatar.png'" alt="Perfil" class="perfil-img">
+</ion-item>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <!-- Cambiar nombre de usuario -->
+    <ion-item>
+      <ion-label>Nombre de usuario</ion-label>
+      <ion-input [(ngModel)]="usuario" (ionBlur)="guardarUsuario()"></ion-input>
+    </ion-item>
+
+    <!-- Tema oscuro/claro -->
+    <ion-item>
+      <ion-label>Tema oscuro</ion-label>
+      <ion-toggle [checked]="modoOscuro" (ionChange)="cambiarTema($event)"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Estado</ion-label>
+        <ion-input [(ngModel)]="estadoUsuario" (ionBlur)="guardarEstado()"></ion-input>
+    </ion-item>
+    <!-- Botón para restablecer datos -->
+    <ion-item>
+      <ion-button expand="full" color="danger" (click)="resetearDatos()">
+        Restablecer datos
+      </ion-button>
+    </ion-item>
+
+    <ion-item>
+      <ion-button expand="full" color="danger" (click)="cerrarSesion()">
+         Cerrar sesión
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

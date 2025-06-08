@@ -1,3 +1,36 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out; /* 🔹 Suaviza la aparición */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* 🔹 Efecto sutil de subida */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.noticia-card {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.resultado-item {
+  animation: slideIn 0.8s ease-out;
+}
+
 #container {
   text-align: center;
 
@@ -24,4 +57,37 @@
 
 #container a {
   text-decoration: none;
+}
+
+ion-img {
+  width: 100%;  /* 🔹 Asegura que no sobrepase el contenedor */
+  max-width: 250px; /* 🔹 Define un tamaño máximo para evitar imágenes gigantes */
+  height: auto; /* 🔹 Permite que mantenga su proporción correcta */
+  display: block; /* 🔹 Centra la imagen */
+  margin: 10px auto; /* 🔹 Espaciado y alineación */
+  object-fit: cover; /* 🔹 Ajusta para que se recorte bien sin deformarse */
+  border-radius: 8px; /* 🔹 Bordes redondeados para mejor presentación */
+}
+
+.boton-container {
+  display: flex;
+  justify-content: flex-end; /* 🔹 Alinea bien el botón a la derecha */
+  padding: 5px; /* 🔹 Ajusta el espaciado */
+}
+
+ion-button {
+  font-size: 12px; /* 🔹 Reduce tamaño del texto */
+  height: 30px; /* 🔹 Ajusta altura */
+  width: auto; /* 🔹 Mantiene proporción correcta */
+  padding: 3px 8px; /* 🔹 Ajusta el espacio interno */
+}
+
+.expansion-container {
+  max-height: 0; /* 🔹 Oculto por defecto */
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out; /* 🔹 Transición suave */
+}
+
+.expandida {
+  max-height: 200px; /* 🔹 Se expande al activarse */
 }
