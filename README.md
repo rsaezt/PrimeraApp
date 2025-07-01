@@ -1,34 +1,31 @@
-# ⚽ Mi App de Noticias de Fútbol
+# ⚽ EquipMatch – App de Equipos Favoritos
 
-🚀 Aplicación desarrollada con **Ionic y Angular** para mostrar noticias de fútbol en tiempo real.  
-Los usuarios pueden explorar las últimas noticias, interactuar en un foro y contactar directamente con los administradores.
+ Aplicación desarrollada con **Ionic y Angular** para explorar equipos deportivos, agregar favoritos, personalizar el perfil del usuario y utilizar funciones clave sin conexión a internet.
 
-##  Características
- **Navegación fluida** entre páginas.  
- **Noticias dinámicas con scroll infinito**.  
- **Animaciones en Ionic** para mejorar la experiencia de usuario.  
- **Interfaz moderna con Ionic UI components**.  
- **Sistema de login** para acceder a más funciones.
+##  Características principales
 
- ##  Instalación y ejecución
-Ejecuta estos comandos para probar la app:
-```sh
+-  Navegación protegida con Route Guards
+-  Consumo de API REST (TheSportsDB) para mostrar equipos
+-  Agregado y eliminación de equipos favoritos
+-  Persistencia local con `@ionic/storage`
+-  Manejo del estado de red (`@capacitor/network`) para controlar acciones
+-  Personalización del usuario: nombre, estado y foto
+-  Geolocalización con `@capacitor/geolocation`
+-  Tema oscuro configurable
+-  Feedback visual con `ion-toast` según conectividad
+
+##  Tecnologías utilizadas
+
+- **Ionic Angular**
+- **TypeScript**
+- **HTML & SCSS**
+- **@ionic/storage-angular**
+- **@capacitor/geolocation**
+- **@capacitor/network**
+- **HttpClient (Angular)**
+
+##  Instalación y ejecución
+
+```bash
 npm install
 ionic serve
-
-
----
-
-### ** 4. Tecnologías Utilizadas**  
- **Ejemplo en `README.md`**  
-```md
-## 🔧 Tecnologías utilizadas
-- **Ionic** 
-- **Angular** 
-- **TypeScript** 
-- **HTML & SCSS** 
-
-##  Explicación del código
-- **Enrutamiento:** Uso de `Router` para gestionar la navegación entre páginas.  
-- **Interpolación:** Se usan `{{variable}}` para mostrar datos dinámicos.  
-- **Animaciones:** Se aplican efectos de entrada y expansión con `ionic animations`.
