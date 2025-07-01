@@ -1,32 +1,71 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AnimationController } from '@ionic/angular';
 import { ChangeDetectorRef } from '@angular/core';
+import { Storage } from '@ionic/storage-angular';
+import { FutbolService } from '../servicios/futbol.service';
+import { FormsModule } from '@angular/forms';
+import { Network } from '@capacitor/network';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, FormsModule],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   nombreUsuario = '';
-  constructor(private animationCtrl: AnimationController, private router: Router, private changeDetectorRef: ChangeDetectorRef){}
-  ngOnInit(){
-    this.cargarNombreUsuario();
+  equipos: any[] = [];
+  segmentActivo = 'noticias';
+  textoBusqueda = '';
+  constructor(private animationCtrl: AnimationController, private router: Router,
+     private changeDetectorRef: ChangeDetectorRef, private storage: Storage, private futbolService: FutbolService){}
+
+  async cargarEquiposDesdeApi(){
+    this.futbolService.getEquipos().subscribe(async data => {
+      this.equipos = data?.teams || [];
+      await this.storage.set('equiposGuardados', this.equipos);
+    });
+  }
+
+  async cargarEquiposDesdeStorage(){
+    const equiposBackup = await this.storage.get('equiposGuardados');
+    this.equipos = equiposBackup || [];
+  }
+  
+  async ngOnInit(){
+    await this.cargarNombreUsuario();
     this.fadeInNoticias();
     this.cantidadNoticias = 7;
-    setInterval(() => {
-      const nuevoNombre = localStorage.getItem('usuario');
-      if (nuevoNombre && nuevoNombre !== this.nombreUsuario){
-        this.nombreUsuario = nuevoNombre;
+    this.futbolService.getEquipos().subscribe(data => {
+      this.equipos = data?.teams || [];
+      console.log('🧪 Equipo completo:', this.equipos[0]);
+      //console.log('🎯 Escudos:', this.equipos.map(e => e.strTeam + ' ➤ ' + e.strTeamBadge));
+    });
+    Network.addListener('networkStatusChange', status => {
+      console.log('📶 Estado de red:', status.connected ? 'Online' : 'Offline')
+      if (!status.connected){
+        this.cargarEquiposDesdeStorage();
+      } else {
+        this.cargarEquiposDesdeApi();
       }
-    }, 1000);
+    })
+   
   
+  }
+
+  async ionViewWillEnter(){
+    await this.cargarNombreUsuario();
+  }
+
+  equiposFiltrados(){
+    return this.equipos.filter(equipo =>
+      equipo.strTeam.toLowerCase().includes(this.textoBusqueda.toLocaleLowerCase())
+    );
   }
 
   fadeInNoticias(){
@@ -55,21 +94,27 @@ export class HomePage {
   } 
 
 
-  cargarNombreUsuario(){
-    const nombreGuardado = localStorage.getItem('usuario');
+  async cargarNombreUsuario(){
+    const nombreGuardado = await this.storage.get('usuario');
     this.nombreUsuario = nombreGuardado ? nombreGuardado : 'Invitado';
   }
   noticias = [
-    { titulo: '⚽ Alemania vs. Francia en la Nations League',
-      resumen: 'El 8 de junio, Alemania y Francia se enfrentaron en Stuttgart para definir al tercer lugar',
-      detalle: 'Tras la derrota que sufrió ante España en semifinales, Francia se quedó con el tercer puesto de la UEFA Nations League. El elenco galo batió por 2-0 a Alemania en el MHP Arena de Stuttgart y se quedó con la medalla de bronce en el certamen europeo. recuperándose de la dolorosa derrota ante el conjunto hispano en semifinales. ',
-      imagen: 'assets/francia.jpg',
+    { titulo: '⚽ PSG 4-0 vs Inter Miami ',
+      resumen: 'Paris Saint-Germain vapuleó al inter miami de Lionel Messi y se instalo en los 4tos de final',
+      detalle: 'Paris Saint-Germain no tuvo piedad y aplastó este domingo por 4-0 al Inter Miami de Lionel Messi en los octavos de final del Mundial de Clubes, en duelo disputado en Atlanta',
+      imagen: 'assets/psg-int.jpg',
       expandida: false },
-    { titulo: '🏆 El Mundial de Clubes inicia la próxima semana', 
-      resumen: 'El torneo arranca el 14 de junio en EE.UU. con 32 equipos compitiendo.',
-      detalle: 'El partido inaugural sera entre el Inter Miami y el Al Ahly',
-      imagen: 'assets/clubes.jpg',
+    { titulo: '🏆 Bayern Múnich a 4tos de final', 
+      resumen: 'El Bayern Múnich sello su pase a los cuartos de final del Mundial de Clubes, tras imponerse con claridad a Flamengo',
+      detalle: 'Bayern Múnich derrotó 2-4 al Flamengo con goles de Leon Goretzka, un doblete de Harry Kane y un autogol de Erick Pulgar, mientras que Gerson y Paulinho descontaron por los brasileños',
+      imagen: 'assets/bay-fla.jpg',
       expandida: false },
+    { titulo: 'Pogba ficha por el monaco',
+      resumen: 'Paul Pogba vuelve a las canchas luego de la suspensión de 2 años por dopaje',
+      detalle: 'Pogba ha firmado oficialmente un contrato de dos años con Mónaco, marcando su regreso emocional al fútbol después de casi dos años fuera de la competición. El jugador de 32 años fue suspendido tras una sanción por dopaje y tuvo su contrato con la Juventus rescindido durante este período. Pogba se emocionó al firmar por Mónaco, citando una profunda conexión emocional con la oferta del club y un nuevo comienzo en la Ligue 1.',
+      imagen: 'assets/pogba.jpg',
+      expandida: false
+    },
     { titulo: 'El Fichaje de Florian Wirtz',
       resumen: 'Liverpool espera concretar el fichaje pronto',
       detalle: 'El Liverpool, a punto de fichar a Florian Wirtz en un traspaso récord tras enviar una nueva oferta por la estrella de Bayer Leverkusen de €150 millones',
@@ -142,9 +187,15 @@ export class HomePage {
   
   }
 
-  cerrarSesion() {
-    localStorage.removeItem('usuario'); // Borra la sesión del usuario
-    window.location.href = '/login'; // Redirige a la pantalla de login
+  async cerrarSesion() {
+    await this.storage.remove('usuarioAutenticado');
+    await this.storage.remove('usuario');
+    await this.storage.remove('equipo');
+    await this.storage.remove('favoritos');
+    await this.storage.remove('estadoUsuario');
+    await this.storage.remove('imagenPerfil');
+    
+    this.router.navigate(['/login']);
   }
 
   

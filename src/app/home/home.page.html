@@ -1,50 +1,85 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Últimas Noticias</ion-title>
+    <ion-title>Bienvenido, {{ nombreUsuario }}</ion-title>
     <ion-buttons slot="end">
-       <ion-button (click)="navegarA('contacto')">🏠 contacto</ion-button>
-       <ion-button (click)="navegarA('ajustes')">⚙️ Ajustes</ion-button>
-       <ion-button (click)="navegarA('perfil')">👤 Perfil</ion-button>
-       <ion-button (click)= "cerrarSesion()">Cerrar sesión</ion-button>
+      <ion-button (click)="navegarA('contacto')">🏠 Contacto</ion-button>
+      <ion-button (click)="navegarA('ajustes')">⚙️ Ajustes</ion-button>
+      <ion-button (click)="navegarA('perfil')">👤 Perfil</ion-button>
+      <ion-button (click)="cerrarSesion()">Cerrar sesión</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-card>
-  <ion-card-header>
-    <ion-card-title>👋 ¡Bienvenido, {{ nombreUsuario }}!</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <p>Explora las últimas novedades, revisa eventos recientes y participa en el foro.</p>
-  </ion-card-content>
-</ion-card>
-
 <ion-content class="ion-padding">
-  <ion-list>
-    <ion-item *ngFor="let noticia of noticias.slice(0, cantidadNoticias)" class="fade-in">
-      <ion-thumbnail>
-      <ion-img [src]="noticia.imagen"></ion-img>
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ noticia.titulo }}</h2>
-        <p>{{ noticia.resumen }}</p>
-        <div [id]="'noticia-' + noticia.titulo" *ngIf="noticia.expandida">
-          <p >{{ noticia.detalle }}</p>
-        </div>
-      </ion-label>
-      
-        <ion-button fill="outline" size="small"  (click)="toggleNoticia(noticia)">
-            {{ noticia.expandida ? 'Ocultar' : 'Ver más' }}
+  <!-- 🧭 Selector de secciones -->
+  <ion-segment [(ngModel)]="segmentActivo">
+    <ion-segment-button value="noticias">
+      <ion-label>📰 Noticias</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="equipos">
+      <ion-label>⚽ Equipos</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- 💬 Noticias -->
+  <div *ngIf="segmentActivo === 'noticias'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Últimas Noticias</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+
+    <ion-list>
+      <ion-item *ngFor="let noticia of noticias.slice(0, cantidadNoticias)" class="fade-in">
+        <ion-thumbnail slot="start">
+          <ion-img [src]="noticia.imagen"></ion-img>
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ noticia.titulo }}</h2>
+          <p>{{ noticia.resumen }}</p>
+          <div [id]="'noticia-' + noticia.titulo" *ngIf="noticia.expandida">
+            <p>{{ noticia.detalle }}</p>
+          </div>
+        </ion-label>
+        <ion-button fill="outline" size="small" (click)="toggleNoticia(noticia)">
+          {{ noticia.expandida ? 'Ocultar' : 'Ver más' }}
         </ion-button>
-     
-     
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="cargarMasNoticias($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más noticias..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+
+  <!-- 👥 Equipos -->
+  <div *ngIf="segmentActivo === 'equipos'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Equipos de La Liga Española 🇪🇸</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+
+    <ion-searchbar [(ngModel)]="textoBusqueda" placeholder="Buscar equipo..."></ion-searchbar>
+    <ion-list *ngIf="equipos.length > 0; else cargando">
+      <ion-item *ngFor="let equipo of equiposFiltrados()">
+        <ion-avatar slot="start">
+          <img [src]="equipo.strBadge || 'assets/icon/default.png'" alt="escudo" />
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ equipo.strTeam }}</h2>
+          <p>{{ equipo.strStadium }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-item *ngIf="equiposFiltrados().length === 0 && textoBusqueda">
+        <ion-label>No se encontraron equipos</ion-label>
     </ion-item>
-  </ion-list>
 
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="cargarMasNoticias($event)">
-    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más noticias..."></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-
-
-  
+    <ng-template #cargando>
+      <ion-item>
+        <ion-label>Cargando equipos...</ion-label>
+      </ion-item>
+    </ng-template>
+  </div>
 </ion-content>

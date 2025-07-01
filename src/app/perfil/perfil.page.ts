@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage-angular';
+import { Geolocation } from '@capacitor/geolocation';
+import { FutbolService } from '../servicios/futbol.service';
+import { Network } from '@capacitor/network';
 
 @Component({
   selector: 'app-perfil',
@@ -12,45 +16,107 @@ import { Router } from '@angular/router';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
-  usuario = localStorage.getItem('usuario') || 'Ricardo';
-  equiposDisponibles = [
-    { nombre: 'Barcelona', imagen: 'assets/barca.jpg' },
-    { nombre: 'Madrid', imagen: 'assets/real.jpg' },
-    { nombre: 'Liverpool', imagen: 'assets/liverpool.png' },
-    { nombre: 'Borussia Dortmund', imagen: 'assets/bvb.png' },
-    { nombre: 'PSG', imagen: 'assets/psg.png' },
-    { nombre: 'Manchester City', imagen: 'assets/city.png' }
-  ];
+  usuario = 'Invitado';
+  latitud!: number;
+  longitud!: number;
+  mostrarUbicacion = false;
+  equiposDisponibles: { nombre: string; imagen: string }[] = [];
 
-  equipoFavorito = localStorage.getItem('equipo') || '';
-  favoritos: string[] = JSON.parse(localStorage.getItem('favoritos') || '[]');
+  equipoFavorito =  '';
+  favoritos: string[] = [];
 
-  ngOnInit() {
-  console.log('Favoritos cargados:', this.favoritos);
+  async ngOnInit() {
+    this.usuario = await this.storage.get('usuario') || 'Invitado';
+    this.equipoFavorito = await this.storage.get('equipo') || '';
+    this.favoritos = await this.storage.get('favoritos') || [];
+    this.apiService.getEquipos().subscribe(data => {
+      this.equiposDisponibles = data?.teams.map((team: any) => ({
+        nombre: team.strTeam,
+        imagen: team.strBadge
+      }));
+    });
+
+    console.log('Favoritos cargados:', this.favoritos);
      if (this.favoritos.length === 0) {
-    console.warn('⚠ Favoritos está vacío, revisa localStorage.');
+    console.warn('⚠ Favoritos está vacío en Storage.');
     }
   }
 
-  guardarUsuario() {
-    localStorage.setItem('usuario', this.usuario);
+  async obtenerUbicacion(){
+    if(this.mostrarUbicacion) {
+      this.mostrarUbicacion = false;
+      return;
+    }
+    try {
+      const position = await Geolocation.getCurrentPosition();
+      this.latitud = position.coords.latitude;
+      this.longitud = position.coords.longitude;
+      this.mostrarUbicacion = true;
+      console.log('📍 Ubicación obtenida:', this.latitud, this.longitud);
+    } catch (error) {
+      console.error('❌ Error obteniendo ubicación:', error);
+    }
   }
 
-  guardarEquipo(event: any) {
-  this.equipoFavorito = event.detail.value; 
-  localStorage.setItem('equipo', this.equipoFavorito);
+  ionViewWillEnter() {
+    this.cargarUsuario();
+  }
+  async cargarUsuario() {
+    const nombre = await this.storage.get('usuario');
+    this.usuario = nombre || 'Invitado';
+  }
+
+  async guardarUsuario() {
+    await this.storage.set('usuario', this.usuario);
+    //localStorage.setItem('usuario', this.usuario);
+  }
+
+  async guardarEquipo(event: any) {
+  this.equipoFavorito = event.detail.value;
+  await this.storage.set('equipo', this.equipoFavorito); 
+  this.mostrarToast('✅ Equipo guardado como favorito');
+  //localStorage.setItem('equipo', this.equipoFavorito);
   
   if (this.equipoFavorito && !this.favoritos.includes(this.equipoFavorito)) {
     this.favoritos.push(this.equipoFavorito); // ✅ Guarda solo el nombre, no el objeto
-    localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
+    await this.storage.set('favoritos', this.favoritos);
+    //localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
   }
 
   console.log('Favoritos actualizados:', JSON.stringify(this.favoritos)); // Verifica en consola
   }
 
-  eliminarEquipo(equipo: string) {
+  async eliminarEquipo(equipo: string) {
+    const status = await Network.getStatus();
+    if (!status.connected) {
+      this.mostrarToast('❌ Estás sin conexión. Acción no permitida.', 'danger');
+      return;
+    }
     this.favoritos = this.favoritos.filter(e => e !== equipo);
-    localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
+    await this.storage.set('favoritos', this.favoritos);
+    this.mostrarToast('🗑️ Equipo eliminado');
+    //localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
+  }
+
+  async limpiarFavoritos(){
+    const status = await Network.getStatus();
+    if (!status.connected) {
+      this.mostrarToast('❌ Estás sin conexión. Acción no permitida.', 'danger');
+      return;
+    }
+    this.favoritos = [];
+    await this.storage.set('favoritos', []);
+    this.mostrarToast('🌪️ Lista de favoritos vaciada', 'medium');
+  }
+
+  async mostrarToast(mensaje: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 1500,
+      color: color,
+      position: 'bottom'
+    });
+    toast.present();
   }
 
   getImagenEquipo(equipo: any): string {
@@ -68,7 +134,8 @@ export class PerfilPage implements OnInit {
   return equipoEncontrado ? equipoEncontrado.imagen : 'assets/default.jpeg';
   }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private storage: Storage,
+     private apiService: FutbolService, private toastController: ToastController) {}
 
   navegarA(pagina: string) {
     this.router.navigate(['/' + pagina]);

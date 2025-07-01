@@ -9,43 +9,74 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <!-- 🧑‍💼 Nombre de usuario -->
   <ion-card class="perfil-container">
     <ion-card-header>
       <ion-card-title>{{ usuario }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Equipos favoritos:</p>
-      <ion-list>
-        <ion-item class="equipo-item" *ngFor="let equipo of favoritos">
-          <ion-label>{{ equipo }}</ion-label>
-        </ion-item>
-      </ion-list>
+      <ion-item>
+        <ion-label position="stacked">Nombre de usuario</ion-label>
+        <ion-input [(ngModel)]="usuario" (ionBlur)="guardarUsuario()"></ion-input>
+      </ion-item>
     </ion-card-content>
   </ion-card>
-</ion-content>
 
-<ion-item>
-  <ion-label>Nombre de usuario</ion-label>
-  <ion-input [(ngModel)]="usuario" (ionBlur)="guardarUsuario()"></ion-input>
-</ion-item>
-
-<ion-item>
-  <ion-label>Equipo favorito</ion-label>
-  <ion-select [value]="equipoFavorito" (ionChange)="guardarEquipo($event)">
-    <ion-select-option *ngFor="let equipo of equiposDisponibles" [value]="equipo.nombre">
-      {{ equipo.nombre }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
-
-<ion-list>
-  <ion-item class="equipo-item" *ngFor="let equipo of favoritos">
-    <ion-thumbnail slot="start">
-      <ion-img [src]="getImagenEquipo(equipo)"></ion-img>
-    </ion-thumbnail>
-    <ion-label>{{ equipo }}</ion-label>
-    <ion-button color="danger" fill="outline" (click)="eliminarEquipo(equipo)">
-      Eliminar
-    </ion-button>
+  <!-- ⭐ Equipo favorito seleccionado -->
+  <ion-item>
+    <ion-label>Equipo favorito</ion-label>
+    <ion-select [value]="equipoFavorito" (ionChange)="guardarEquipo($event)">
+      <ion-select-option *ngFor="let equipo of equiposDisponibles" [value]="equipo.nombre">
+        {{ equipo.nombre }}
+      </ion-select-option>
+    </ion-select>
   </ion-item>
-</ion-list>
+
+  <ion-card *ngIf="equipoFavorito">
+    <img [src]="getImagenEquipo(equipoFavorito)" />
+    <ion-card-header>
+      <ion-card-title>Tu equipo favorito actual</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>{{ equipoFavorito }}</ion-card-content>
+  </ion-card>
+
+  <!-- ⭐ Lista de favoritos -->
+  <ion-label color="medium" class="seccion-titulo">⭐ Tus equipos favoritos</ion-label>
+  <ion-card-content *ngIf="favoritos.length === 0">
+    Todavía no agregaste equipos favoritos. Seleccioná uno para empezar ⭐
+  </ion-card-content>
+
+  <ion-list>
+    <ion-item class="equipo-item" *ngFor="let equipo of favoritos">
+      <ion-thumbnail slot="start">
+        <ion-img [src]="getImagenEquipo(equipo)"></ion-img>
+      </ion-thumbnail>
+      <ion-label>{{ equipo }}</ion-label>
+      <ion-button color="danger" fill="outline" (click)="eliminarEquipo(equipo)">
+        Eliminar
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" color="danger" *ngIf="favoritos.length > 0" (click)="limpiarFavoritos()">
+    Limpiar todos los favoritos
+  </ion-button>
+
+  <!-- 📍 Ubicación -->
+  <ion-label color="medium" class="seccion-titulo">📍 Tu ubicación</ion-label>
+  <ion-button expand="block" color="tertiary" (click)="obtenerUbicacion()">
+    {{ mostrarUbicacion ? 'Ocultar mi ubicación' : 'Obtener mi ubicación' }}
+  </ion-button>
+
+  <ion-card *ngIf="mostrarUbicacion">
+    <ion-card-header>
+      <ion-card-title>Coordenadas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Latitud: {{ latitud }}<br />
+      Longitud: {{ longitud }}
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
