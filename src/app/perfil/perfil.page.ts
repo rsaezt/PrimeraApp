@@ -48,6 +48,7 @@ export class PerfilPage implements OnInit {
       return;
     }
     try {
+      await Geolocation.requestPermissions();
       const position = await Geolocation.getCurrentPosition();
       this.latitud = position.coords.latitude;
       this.longitud = position.coords.longitude;

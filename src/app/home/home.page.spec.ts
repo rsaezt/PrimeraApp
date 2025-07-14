@@ -1,21 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
-
+import { TestBed } from '@angular/core/testing';
 import { HomePage } from './home.page';
+import { IonicStorageModule, Storage } from '@ionic/storage-angular';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('HomePage', () => {
   let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HomePage],
-      imports: [IonicModule.forRoot()]
+      imports: [
+        HomePage,
+        IonicStorageModule.forRoot(),
+        HttpClientModule // ✅ solución clave
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomePage);
+    const storage = TestBed.inject(Storage);
+    await storage.create();
+
+    const fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

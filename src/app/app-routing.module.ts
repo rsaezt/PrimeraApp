@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'perfil', component: PerfilPage, canActivate: [AuthGuard] },
   { path: 'ajustes', component: AjustesPage, canActivate: [AuthGuard] },
   { path: 'contacto', component: ContactoPage, canActivate: [AuthGuard] }
-];
+]; 
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
