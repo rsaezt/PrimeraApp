@@ -24,6 +24,18 @@
 - **@capacitor/network**
 - **HttpClient (Angular)**
 
+## Pruebas implementadas
+
+**Pruebas unitarias:** ejecutadas con Jasmine y Karma para validar servicios y componentes. Resultado exitoso: 11 especificaciones sin fallos.
+  ```bash
+  ng test
+
+Pruebas end-to-end (E2E) Implementadas con Cypress para simular el flujo completo del usuario: inicio de sesión, navegación, selección de equipos y perfil.
+
+Para ejecutar las pruebas:
+ionic serve      # en una terminal
+npx cypress open # en otra terminal
+
 ##  Instalación y ejecución
 
 ```bash
